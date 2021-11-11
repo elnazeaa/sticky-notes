@@ -3,26 +3,22 @@ import styled from "styled-components";
 import { NoteContext } from "../context/NoteContext";
 
 const AddNote = () => {
-  const { handleSave } = useContext(NoteContext);
-  const [textAreaValue, setTextAreaValue] = useState("");
+  const { handleSave, getTxtAreaValue, newText } = useContext(NoteContext);
+  let number = 200;
   return (
     <Wrapper className="addNote">
       <textarea
         cols="40"
         rows="10"
         placeholder="type to add a note...."
-        onChange={(e) => {
-          setTextAreaValue(e.target.value);
-        }}
+        onChange={getTxtAreaValue}
+        value={newText}
       ></textarea>
       <div className="footer">
-        <p>200 remaining</p>
-        <button
-          className="saveBtn"
-          onClick={() => {
-            handleSave(textAreaValue);
-          }}
-        >
+        <p>
+          {number - newText.length < 0 ? 0 : number - newText.length} remaining
+        </p>
+        <button className="saveBtn" onClick={handleSave}>
           save
         </button>
       </div>
@@ -31,8 +27,9 @@ const AddNote = () => {
 };
 
 const Wrapper = styled.div`
-  background: #6f4947;
-  height: 250px;
+  width: 300px;
+  background: #9eacc9;
+  height: 300px;
   border-radius: 10px;
   border-radius: 10px;
   display: flex;

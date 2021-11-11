@@ -1,15 +1,22 @@
-import React from "react";
+import React, { useContext } from "react";
 import Moment from "react-moment";
 import styled from "styled-components";
 import { FaTrashAlt } from "react-icons/fa";
+import { NoteContext } from "../context/NoteContext";
 
 const NoteItems = ({ item }) => {
+  const { removeNote } = useContext(NoteContext);
   return (
     <Wrapper>
       <p className="msg">{item.message}</p>
       <div className="footer">
         <small>{item.date}</small>
-        <button className="btn">
+        <button
+          className="btn"
+          onClick={() => {
+            removeNote(item.id);
+          }}
+        >
           <FaTrashAlt />
         </button>
       </div>
@@ -19,7 +26,7 @@ const NoteItems = ({ item }) => {
 
 const Wrapper = styled.div`
   background: #6f4947;
-  height: 250px;
+  height: 300px;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -34,6 +41,7 @@ const Wrapper = styled.div`
   .msg {
     font-size: 18px;
     font-weight: 400;
+    white-space: pre-wrap;
   }
   .btn {
     background: transparent;

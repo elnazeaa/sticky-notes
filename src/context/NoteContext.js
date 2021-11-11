@@ -1,32 +1,76 @@
-import React, { createContext, useReducer } from "react";
+import React, { createContext, useEffect, useReducer } from "react";
 import noteReducre from "../reducer/noteReducer";
-import { nanoid } from "nanoid";
-import moment from "moment";
 
 export const NoteContext = createContext();
 
+function showItems() {
+  let items = localStorage.getItem("saveItems");
+  if (items) {
+    return JSON.parse(localStorage.getItem("saveItems"));
+  } else {
+    return [];
+  }
+}
+
 const NoteContextProvider = (props) => {
+  //intiall Values
   const initalState = {
-    all_notes: [
-      {
-        id: nanoid(),
-        date: moment().add(10, "days").calendar(),
-        message: "first message",
-      },
-    ],
+    all_notes: showItems(),
     newText: "",
+    searchValue: "",
+    copyNotes: showItems(),
   };
 
   const [state, dispatch] = useReducer(noteReducre, initalState);
 
-  const handleSave = (text) => {
-    if (text) {
-      dispatch({ type: "GET_TEXT_VALUE", payload: text });
+  //save vAlue
+  const handleSave = () => {
+    if (state.newText) {
+      dispatch({ type: "GET_TEXT_VALUE" });
     }
   };
 
+  //handle textArea and remaining section
+  const getTxtAreaValue = (e) => {
+    const val = e.target.value;
+    let number = 200;
+    if (number - state.newText.length > 0) {
+      dispatch({ type: "TEXT_AREA", payload: val });
+    }
+  };
+
+  //Remove note
+  const removeNote = (id) => {
+    dispatch({ type: "REMOVE_NOTE", payload: id });
+  };
+
+  //Search Value
+  const getSearchValue = (e) => {
+    let val = e.target.value;
+    dispatch({ type: "GET_SEARCH_VAL", payload: val });
+    dispatch({ type: "SEARCH" });
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    dispatch({ type: "SUBMIT_FORM" });
+  };
+
+  useEffect(() => {
+    localStorage.setItem("saveItems", JSON.stringify(state.all_notes));
+  }, [state.all_notes, state.copyNotes]);
+
   return (
-    <NoteContext.Provider value={{ ...state, handleSave }}>
+    <NoteContext.Provider
+      value={{
+        ...state,
+        handleSave,
+        getTxtAreaValue,
+        removeNote,
+        getSearchValue,
+        handleSearchSubmit,
+      }}
+    >
       {props.children}
     </NoteContext.Provider>
   );

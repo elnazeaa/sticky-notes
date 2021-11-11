@@ -47,8 +47,6 @@ const noteReducre = (state, action) => {
   //Search
   if (action.type === "SEARCH") {
     let tempNotes = [...state.copyNotes];
-    console.log(tempNotes);
-    console.log(state.searchValue);
     tempNotes = tempNotes.filter((item) => {
       return item.message.toLowerCase().includes(state.searchValue);
     });
